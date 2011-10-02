@@ -14,7 +14,7 @@ Benefits include:
 
 ## usage ##
 
-```ordr.in```
+`ordr.in`
 
 Everything is decided in the gem. Argument parsing to follow!
 
