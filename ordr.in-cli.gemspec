@@ -8,5 +8,6 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/ArtemTitoulenko/ordr.in-cli'
   
   s.executables = ['ordr.in']
-  s.has_rdoc = false
+  s.files      	= Dir["lib/**/*"] - ["Gemfile.lock"]
+  s.has_rdoc 	= false
 end
