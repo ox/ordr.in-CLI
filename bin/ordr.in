@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+# the ordr.in CLI
+# made by: artem titoulenko
+# made at: HackNY F2011 Hackathon
+
+require 'json'
+require 'ordrin'
+
+def help 
+	puts "the ordr.in CLI tool\nfinally, nourishment in a terminal"
+	puts "usage:"
+	puts "\tordr.in setup\t\t\tset up name, address, card, etc."
+	puts "\tordr.in [zip]\t\t\tget restaurants in the current area"
+	exit(0)
+end
+
+#help if ARGV.empty?
+
+if(ARGV[0] == 'help')
+	help
+end
+
+OrdrIn::API.new("zOPVxYXs4BGZHfuKu8bTaA","https://r-test.ordr.in")
+
+dt = OrdrIn::DT.new
+dt.asap = true
+
+# puts "where you at? [street]\\n[town, state]\\n[zip]\\n"
+# street = STDIN.gets.chomp
+# town, state = STDIN.gets.chomp.split(', ')
+# zip = STDIN.gets.chomp
+
+# puts "what's your phone number? [number]\\n"
+# phone = STDIN.gets.chomp
+
+#address = OrdrIn::Address.new(street, town, zip, "", state, phone, "hacker")
+address = OrdrIn::Address.new("1 Main St", "College Station", "31408", "", "TX", "9082173824", "hacker")
+puts address
+
+r = OrdrIn::Restaurant.new
+rest = JSON.parse r.delivery_list(dt, address)
+
+for i in 0..(rest.size-1) do
+	puts i.to_s + ': ' + rest[i]['na']
+	puts rest[i]['cu'].join ', '
+	puts rest[i]['ad']
+	puts rest[i]['id']
+	puts ""
+end
+
+puts "which do you want?"
+num = gets.chomp.to_i
+
+details =  JSON.parse r.details(rest[num]['id'])
+
+for i in 0..(details['menu'].size-1) do
+	puts i.to_s + ": " + details['menu'][i]['name']
+end
+
+puts "pick a category"
+num = gets.chomp.to_i
