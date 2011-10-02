@@ -21,10 +21,65 @@ if(ARGV[0] == 'help')
 	help
 end
 
+def print_place place
+	puts i.to_s + ': ' + place['na']
+	puts place['cu'].join ', '
+	puts place['ad']
+	puts place['id']
+	puts ""
+end
+
+def print_places rest, cu = nil
+	for i in 0..(rest.size-1) do
+		if cu == nil
+			print_place rest[i]
+		else
+			if rest[i]['cu'].include? cu
+				print_place rest[i]
+			end
+		end
+	end
+end
+
+def print_categories details
+	for i in 0..(details['menu'].size-1) do
+		puts i.to_s + ": " + details['menu'][i]['name']
+	end
+end
+
 OrdrIn::API.new("zOPVxYXs4BGZHfuKu8bTaA","https://r-test.ordr.in")
 
 dt = OrdrIn::DT.new
 dt.asap = true
+
+if ARGV[0] == 'from' || ARGV[1] == 'from'
+	# we're looking for restaurants
+	cu = nil
+	if(ARGV[0] == 'from')
+		address = OrdrIn::Address.new("1 Main St", "College Station", ARGV[1], "", "TX", "9082173824", "hacker")
+	else
+		address = OrdrIn::Address.new("1 Main St", "College Station", ARGV[2], "", "TX", "9082173824", "hacker")
+		cu = ARGV[0]
+	end
+
+	r = OrdrIn::Restaurant.new
+	r.delivery_list(dt, address)
+	rest = JSON.parse r.delivery_list(dt, address)
+	print_places rest, cu
+end
+
+case ARGV[0]
+when 'categories'
+	# print categories from restaurants menu
+	r = OrdrIn::Restaurant.new
+	print_categories JSON.parse r.details(rest[ARGV[1]]['id'])
+when 'menu'
+	r = OrdrIn::Restaurant.new
+	details =  JSON.parse r.details(rest[num]['id'])
+	details['menu'][ARGV[1]]['children'].each do |k|
+		puts k['name'] + " - " + k['price']
+	end
+
 
 # puts "where you at? [street]\\n[town, state]\\n[zip]\\n"
 # street = STDIN.gets.chomp
@@ -35,28 +90,26 @@ dt.asap = true
 # phone = STDIN.gets.chomp
 
 #address = OrdrIn::Address.new(street, town, zip, "", state, phone, "hacker")
-address = OrdrIn::Address.new("1 Main St", "College Station", "31408", "", "TX", "9082173824", "hacker")
-puts address
+# address = OrdrIn::Address.new("1 Main St", "College Station", "31408", "", "TX", "9082173824", "hacker")
+# puts address
 
-r = OrdrIn::Restaurant.new
-rest = JSON.parse r.delivery_list(dt, address)
+# r = OrdrIn::Restaurant.new
+# rest = JSON.parse r.delivery_list(dt, address)
 
-for i in 0..(rest.size-1) do
-	puts i.to_s + ': ' + rest[i]['na']
-	puts rest[i]['cu'].join ', '
-	puts rest[i]['ad']
-	puts rest[i]['id']
-	puts ""
-end
+# print_places rest
 
-puts "which do you want?"
-num = gets.chomp.to_i
+# print "which do you want?: "
+# num = gets.chomp.to_i
+# puts ""
 
-details =  JSON.parse r.details(rest[num]['id'])
+# details =  JSON.parse r.details(rest[num]['id'])
 
-for i in 0..(details['menu'].size-1) do
-	puts i.to_s + ": " + details['menu'][i]['name']
-end
+# print_categories details
 
-puts "pick a category"
-num = gets.chomp.to_i
+# print "pick a category: "
+# num = gets.chomp.to_i
+# puts ""
+
+# details['menu'][num]['children'].each do |k|
+# 	puts k['name'] + " - " + k['price']
+# end
