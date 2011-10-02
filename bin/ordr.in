@@ -128,3 +128,47 @@ when 'order'
 		puts "not enough parameters, add more parameters"
 	end
 end
+
+if ARGV[0] == 'user'
+	api = OrdrIn::API.new "zOPVxYXs4BGZHfuKu8bTaA", "https://u-test.ordr.in"
+	user = nil
+	address = nil
+	if File.exist? File.expand_path("~/.ordr.in.acct")
+		data = File.open(File.expand_path("~/.ordr.in.acct"), "r").gets.unpack("A32A32A32A32A32A32A32A32A32")
+		api.set_curr_acct data[0].chomp, data[1].chomp
+		address = data[4..-1]
+		user = OrdrIn::User.new
+		puts address
+		exit 0
+	end
+
+	case ARGV[1]
+	when 'make_account'
+		help if ARGV.length != 5
+		
+		u = OrdrIn::User.new
+		u.make_acct ARGV[1], ARGV[2], ARGV[3], ARGV[4]
+
+		File.open(File.expand_path("~/.ordr.in.acct"), "w+") do |file|
+			file.puts ARGV[1..-1].pack("A32A32A32A32")
+		end
+	when 'update_address'
+		"log in first" unless $_email
+		#"street" "town" "zip" "state" "phone"
+		address=OrdrIn::Address.new ARGV[2], ARGV[3], ARGV[4], ARGV[5], ARGV[6]
+		api.set_curr_account user[0], user[1]
+		user.update_address(address)
+		
+		d = File.open(File.expand_path("~/.ordr.in.acct", "a+"))
+		f.seek(128)
+		f.write address.pack("A32A32A32A32A32")
+		f.close
+	when 'order'
+		if user and address
+			o = OrderIn::Order.new
+			o.submit(ARGV[2], ARGV[3], ARGV[4], ARGV[5], dt, user[0], user[2], user[3], address, user[2..3].join(', '), ARGV[6], ARGV[7], ARGV[8], address)
+		else
+			help
+		end
+	end
+end
