@@ -128,37 +128,3 @@ when 'order'
 		puts "not enough parameters, add more parameters"
 	end
 end
-
-
-# puts "where you at? [street]\\n[town, state]\\n[zip]\\n"
-# street = STDIN.gets.chomp
-# town, state = STDIN.gets.chomp.split(', ')
-# zip = STDIN.gets.chomp
-
-# puts "what's your phone number? [number]\\n"
-# phone = STDIN.gets.chomp
-
-#address = OrdrIn::Address.new(street, town, zip, "", state, phone, "hacker")
-# address = OrdrIn::Address.new("1 Main St", "College Station", "31408", "", "TX", "9082173824", "hacker")
-# puts address
-
-# r = OrdrIn::Restaurant.new
-# rest = JSON.parse r.delivery_list(dt, address)
-
-# print_places rest
-
-# print "which do you want?: "
-# num = gets.chomp.to_i
-# puts ""
-
-# details =  JSON.parse r.details(rest[num]['id'])
-
-# print_categories details
-
-# print "pick a category: "
-# num = gets.chomp.to_i
-# puts ""
-
-# details['menu'][num]['children'].each do |k|
-# 	puts k['name'] + " - " + k['price']
-# end
