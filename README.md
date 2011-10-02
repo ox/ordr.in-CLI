@@ -15,15 +15,16 @@ Benefits include:
 ## usage ##
 
 `ordr.in` to display the help
-`ordr.in [cuisine] from <zip>` show restaurants and their id's serving [cuisine] in <zip>
+`ordr.in [cuisine] around <zip>` show restaurants and their id's serving [cuisine] in <zip>
 `ordr.in categories <id>` show menu categories from restaurant with <id>
-`ordr.in menu <id> [for <category>]` show the menu for the specified restaurant <id>, trimmed to the specific <category>, which is a number, if it is included, includes price, description, price, id
-`ordr.in compile_tray <id> <quantity>, <id> <quantity>,...` compile a collection of food <id>s and their <quantities>.`ordr.in order 
-`ordr.in order <restaurant id> <tray> <tip> <email> <first name> <last name> <street address> <town> <state> <zip> <cc number> <cc security code> <expiration month><expiration year (2 digits)>` The motherload of all commands.
+`ordr.in menu <id> [for <category>]` show the menu for the specified restaurant <id>, trimmed to the specific <category>
+`ordr.in compile_tray <id> <quantity> <id> <quantity>,...` compile a collection of food <id>s and their <quantities>.`ordr.in order 
+`ordr.in order <restaurant id> <tray> <tip> <email> <first name> <last name> <street address> <town> <state> <zip> <phone number> <cc number> <cc security code> <expiration month><expiration year (2 digits)>` The motherload of all commands.
 This grabs your compiled <tray>, cc information and assumes that your billing address is the same as the ordering address. You're not leaving your house anyway, why should that change?
 
-
 ## future usage ##
+
+this depends soley on when ordr.in enables account creation via their API.
 
 `ordr.in make_account <email> <password> <first name> <last name>` make an ordr.in account to save your credentials for easy ordering
 `ordr.in log_in <email> <pass>` log in to ordr.in to enable faster ordering

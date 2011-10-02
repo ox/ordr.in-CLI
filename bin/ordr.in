@@ -10,8 +10,13 @@ require 'ordrin'
 def help 
 	puts "the ordr.in CLI tool\nfinally, nourishment in a terminal"
 	puts "usage:"
-	puts "\tordr.in setup\t\t\tset up name, address, card, etc."
-	puts "\tordr.in [zip]\t\t\tget restaurants in the current area"
+	puts "`ordr.in` to display the help
+`ordr.in [cuisine] from <zip>` show restaurants and their id's serving [cuisine] in <zip>
+`ordr.in categories <id>` show menu categories from restaurant with <id>
+`ordr.in menu <id> [for <category>]` show the menu for the specified restaurant <id>, trimmed to the specific <category>
+`ordr.in compile_tray <id> <quantity> <id> <quantity>,...` compile a collection of food <id>s and their <quantities>.`ordr.in order 
+`ordr.in order <restaurant id> <tray> <tip> <email> <first name> <last name> <street address> <town> <state> <zip> <phone number> <cc number> <cc security code> <expiration month><expiration year (2 digits)>` The motherload of all commands.
+This grabs your compiled <tray>, cc information and assumes that your billing address is the same as the ordering address. You're not leaving your house anyway, why should that change?"
 	exit(0)
 end
 
@@ -22,19 +27,19 @@ if(ARGV[0] == 'help')
 end
 
 def print_place place
-	puts i.to_s + ': ' + place['na']
-	puts place['cu'].join ', '
-	puts place['ad']
-	puts place['id']
-	puts ""
+	puts "name: " + place['na']
+	puts "cuisine: " + place['cu'].join(', ')
+	puts "address: " + place['ad']
 end
 
 def print_places rest, cu = nil
 	for i in 0..(rest.size-1) do
 		if cu == nil
+			puts "\nid: " + rest[i]['id'].to_s
 			print_place rest[i]
 		else
 			if rest[i]['cu'].include? cu
+				puts "\nid: " + rest[i]['id'].to_s
 				print_place rest[i]
 			end
 		end
@@ -52,10 +57,12 @@ OrdrIn::API.new("zOPVxYXs4BGZHfuKu8bTaA","https://r-test.ordr.in")
 dt = OrdrIn::DT.new
 dt.asap = true
 
-if ARGV[0] == 'from' || ARGV[1] == 'from'
+help if ARGV.empty?
+
+if ARGV[0] == 'around' || ARGV[1] == 'around'
 	# we're looking for restaurants
 	cu = nil
-	if(ARGV[0] == 'from')
+	if(ARGV[0] == 'around')
 		address = OrdrIn::Address.new("1 Main St", "College Station", ARGV[1], "", "TX", "9082173824", "hacker")
 	else
 		address = OrdrIn::Address.new("1 Main St", "College Station", ARGV[2], "", "TX", "9082173824", "hacker")
@@ -75,10 +82,52 @@ when 'categories'
 	print_categories JSON.parse r.details(rest[ARGV[1]]['id'])
 when 'menu'
 	r = OrdrIn::Restaurant.new
-	details =  JSON.parse r.details(rest[num]['id'])
-	details['menu'][ARGV[1]]['children'].each do |k|
-		puts k['name'] + " - " + k['price']
+	details =  JSON.parse r.details(ARGV[1])
+	if(ARGV[2] == "for" && ARGV[3])
+		details['menu'].each do |k|
+			if(k['name'] == ARGV[3]) 
+				puts k['name'] + ":"
+				k['children'].each do |c|
+					puts "\t" + c['name'] + " - " + c['price']
+					puts "\tid: " + c['id']
+					puts "\t" + c['descrip'] if c['descrip']
+					puts ""
+				end
+			end
+		end
+	else
+		details['menu'].each do |k|
+			puts k['name'] + ":"
+			k['children'].each do |c|
+				puts "\t" + c['name'] + " - " + c['price']
+				puts "\tid: " + c['id']
+				puts "\t" + c['descrip'] if c['descrip']
+				puts ""
+			end
+		end
 	end
+when 'compile_tray'
+	if(ARGV[1] && ARGV[2])
+		k = ARGV[1..-1]
+		str = ""
+		while !k.empty?
+			str += "[#{k[0]}][#{k[1]}]"
+			k = k[2..-1]
+			if k.size >= 2 
+				str += "-"
+			end
+		end
+		puts str
+	end
+when 'order'
+	if ARGV.size == 13
+		address = OrdrIn::Address.new ARGV[7], ARGV[8], ARGV[10], "", ARGV[9], ARGV[11], "hacker"
+		o = OrdrIn::Order.new
+		o.submit ARGV[1], ARGV[2], ARGV[3], dt, ARGV[4], ARGV[5], ARGV[6], address, ARGV[5..6].join(' '), ARGV[12], ARGV[13], ARGV[14] 
+	else
+		puts "not enough parameters, add more parameters"
+	end
+end
 
 
 # puts "where you at? [street]\\n[town, state]\\n[zip]\\n"
