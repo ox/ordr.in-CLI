@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.email = 'artem.titoulenko@gmail.com'
   s.homepage = 'https://github.com/ArtemTitoulenko/ordr.in-cli'
   
+  s.add_dependency('ordrin', '*')
   s.executables = ['ordr.in']
   s.files      	= Dir["lib/**/*"] - ["Gemfile.lock"]
   s.has_rdoc 	= false
